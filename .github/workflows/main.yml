@@ -3,7 +3,7 @@ name: Deploy to AKS using Managed Identity
 on:
   push:
     branches:
-      - main  # Trigger on pushes to the 'main' branch
+      - main
 
 jobs:
   deploy:
@@ -17,10 +17,9 @@ jobs:
       run: |
         curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
 
-    - name: Login to Azure
-      uses: azure/login@v1
-      with:
-        creds: ${{ secrets.AZURE_CREDENTIALS }}
+    - name: Login to Azure using Managed Identity
+      run: |
+        az login --identity
 
     - name: Install kubectl
       run: |
@@ -34,5 +33,5 @@ jobs:
 
     - name: Deploy to AKS
       run: |
-        kubectl apply -f deployment.yaml  # Apply the Kubernetes deployment
-        kubectl apply -f canary-deployment.yaml  # Optional: Apply the canary deployment
+        kubectl apply -f deployment.yaml
+        kubectl apply -f canary-deployment.yaml
